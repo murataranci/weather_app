@@ -1,0 +1,157 @@
+.weather-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Yağmur Animasyonu */
+.rain .drop {
+  position: absolute;
+  width: 2px;
+  height: 20px;
+  background: linear-gradient(transparent, rgba(255, 255, 255, 0.7));
+  animation: rain linear infinite 0.5s;
+}
+
+@keyframes rain {
+  0% {
+    transform: translateY(-100px);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+/* Bulut Animasyonu */
+.cloud {
+  position: absolute;
+  width: 100px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  animation: float linear infinite 60s;
+  backdrop-filter: blur(4px);
+}
+
+.cloud:before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 15px;
+  width: 40px;
+  height: 40px;
+  background: inherit;
+  border-radius: 50%;
+}
+
+.cloud:after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: 15px;
+  width: 50px;
+  height: 50px;
+  background: inherit;
+  border-radius: 50%;
+}
+
+@keyframes float {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100vw);
+  }
+}
+
+/* Güneş Animasyonu */
+.sun {
+  position: absolute;
+  top: 50px;
+  right: 50px;
+  width: 80px;
+  height: 80px;
+  background: #ffd700;
+  border-radius: 50%;
+  box-shadow: 0 0 50px #ffd700;
+  animation: glow 4s ease-in-out infinite;
+}
+
+.rays {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  animation: spin 20s linear infinite;
+}
+
+.rays:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140px;
+  height: 4px;
+  background: #ffd700;
+  transform-origin: 0 0;
+  box-shadow: 0 0 20px #ffd700;
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 50px #ffd700; }
+  50% { box-shadow: 0 0 100px #ffd700; }
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* Kar Animasyonu */
+.snowflake {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  animation: snowfall linear infinite 3s;
+  opacity: 0.8;
+  filter: blur(1px);
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+
+/* Arka plan renkleri */
+.sunny {
+  background: linear-gradient(to bottom, #87CEEB, #4A90E2);
+  backdrop-filter: brightness(1.2);
+}
+
+.cloudy {
+  background: linear-gradient(to bottom, #636e72, #b2bec3);
+  backdrop-filter: brightness(0.9);
+}
+
+.partly-cloudy {
+  background: linear-gradient(to bottom, #87CEEB, #74b9ff);
+}
+
+.rainy {
+  background: linear-gradient(to bottom, #2d3436, #636e72);
+}
+
+.snowy {
+  background: linear-gradient(to bottom, #dfe6e9, #b2bec3);
+} 
