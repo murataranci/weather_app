@@ -11,11 +11,15 @@ interface LocationService {
   getDistricts: (cityName: string) => Promise<string[]>;
 }
 
+interface District {
+  name: string;
+  center?: boolean;
+}
+
 interface City {
   name: string;
   districts: string[];
 }
-
 
 interface CityApiResponse {
   name: string;
@@ -48,15 +52,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isInitialSearch = true 
 
         // Her şehir için ilçeleri yükle
         const citiesWithDistricts: City[] = await Promise.all(
-          citiesData.map(async (city: CityApiResponse): Promise<City> => {
-            const districts: string[] = await locationService.getDistricts(city.name as keyof typeof turkeyData);
+          citiesData.map(async (city: CityApiResponse) => {
+            const districtsData: District[] = await locationService.getDistricts(city.name as keyof typeof turkeyData)
+            const districts = districtsData.map(district => district.name)
             return {
               name: city.name,
-              districts: districts || [], // districts undefined ise boş array döndür
-            };
+              districts: districts || []
+            }
           })
-        );
-           
+        )
         setCities(citiesWithDistricts)
       } catch (error) {
         console.error('Error loading cities:', error)
