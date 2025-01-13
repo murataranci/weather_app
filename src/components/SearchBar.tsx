@@ -2,8 +2,24 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaSearch, FaMapMarkerAlt, FaStar } from 'react-icons/fa'
 import { useFavorites } from '../hooks/useFavorites'
-import { turkishCities } from '../data/cities'
 import { locationService } from '../services/locationService'
+import { turkeyData } from '../data/turkeyData'
+
+// Interface'leri en üstte tanımlayalım
+interface LocationService {
+  getCities: () => Promise<CityApiResponse[]>;
+  getDistricts: (cityName: string) => Promise<string[]>;
+}
+
+interface City {
+  name: string;
+  districts: string[];
+}
+
+
+interface CityApiResponse {
+  name: string;
+}
 
 interface SearchBarProps {
   onSearch: (city: string) => void;
@@ -17,37 +33,40 @@ interface SearchResult {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isInitialSearch = true }) => {
-  const [query, setQuery] = useState('')
-  const [isFocused, setIsFocused] = useState(false)
+  const [query, setQuery] = useState<string>('')
+  const [isFocused, setIsFocused] = useState<boolean>(false)
   const { favorites } = useFavorites()
   const [cities, setCities] = useState<City[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   // Şehirleri ve ilçeleri yükle
   useEffect(() => {
     const loadCities = async () => {
       try {
-        setIsLoading(true);
-        const citiesData = await locationService.getCities();
-        
+        setIsLoading(true)
+        const citiesData: CityApiResponse[] = await locationService.getCities()
+
         // Her şehir için ilçeleri yükle
-        const citiesWithDistricts = await Promise.all(
-          citiesData.map(async (city) => {
-            const districts = await locationService.getDistricts(city.name);
-            return { ...city, districts };
+        const citiesWithDistricts: City[] = await Promise.all(
+          citiesData.map(async (city: CityApiResponse): Promise<City> => {
+            const districts: string[] = await locationService.getDistricts(city.name as keyof typeof turkeyData);
+            return {
+              name: city.name,
+              districts: districts || [], // districts undefined ise boş array döndür
+            };
           })
         );
-
-        setCities(citiesWithDistricts);
+           
+        setCities(citiesWithDistricts)
       } catch (error) {
-        console.error('Lokasyon verileri yüklenirken hata:', error);
+        console.error('Error loading cities:', error)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    loadCities();
-  }, []);
+    loadCities()
+  }, [])
 
   // Şehir ve ilçe önerilerini filtrele
   const filteredResults = useMemo(() => {
@@ -66,15 +85,17 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isInitialSearch = true 
       }
 
       // İlçe adı eşleşiyorsa ekle
-      city.districts.forEach(district => {
-        if (district.name.toLowerCase().replace('i', 'İ').includes(normalizedQuery)) {
-          results.push({
-            cityName: city.name,
-            districtName: district.name,
-            displayName: `${district.name}, ${city.name}`
-          });
-        }
-      });
+      if (city.districts && Array.isArray(city.districts)) {
+        city.districts.forEach(district => {
+          if (typeof district === 'string' && district.toLowerCase().replace('i', 'İ').includes(normalizedQuery)) {
+            results.push({
+              cityName: city.name,
+              districtName: district,
+              displayName: `${district}, ${city.name}`
+            });
+          }
+        });
+      }
     });
 
     return results.slice(0, 5);

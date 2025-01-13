@@ -23,18 +23,19 @@ class LocationService {
     }
   }
 
-  async getDistricts(cityName: string): Promise<District[]> {
+  async getDistricts(cityName: keyof typeof turkeyData): Promise<District[]> {
     try {
       const districts = turkeyData[cityName] || [];
       return districts.map(name => ({
         name,
-        center: false
+        center: false,
       }));
     } catch (error) {
       console.error('İlçe listesi alınırken hata:', error);
       throw error;
     }
   }
+  
 }
 
 export const locationService = new LocationService(); 
