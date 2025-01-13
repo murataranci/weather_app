@@ -5,6 +5,7 @@ interface AppContextType {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
   convertTemperature: (temp: number) => number;
+  toggleTemperatureUnit: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -56,11 +57,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return temp
   }
 
+  const toggleTemperatureUnit = () => {
+    setTemperatureUnit(prev => prev === 'celsius' ? 'fahrenheit' : 'celsius')
+  }
+
   const value = {
     temperatureUnit,
     isDarkMode,
     toggleDarkMode,
     convertTemperature,
+    toggleTemperatureUnit,
   }
 
   return (
