@@ -6,6 +6,17 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'framer-motion'],
+          charts: ['chart.js', 'react-chartjs-2']
+        }
+      }
+    }
+  },
+  server: {
+    port: 3000
   }
 }) 
